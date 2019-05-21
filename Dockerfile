@@ -21,4 +21,4 @@ COPY run.py /code/run.py
 COPY start.sh /code/start.sh
 
 # Entry point
-ENTRYPOINT [ "/bin/bash", "start.sh" ]
+# ENTRYPOINT [ "/bin/bash" ]

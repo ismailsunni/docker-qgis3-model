@@ -23,6 +23,6 @@ QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
 
 print('Hello world')
 print('You are using QGIS version ' + qgis.utils.Qgis.QGIS_VERSION)
-print(QgsApplication.processingRegistry().algorithms())
+# print(QgsApplication.processingRegistry().algorithms())
 
 qgs.exitQgis()
