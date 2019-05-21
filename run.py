@@ -23,6 +23,23 @@ QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
 
 print('Hello world')
 print('You are using QGIS version ' + qgis.utils.Qgis.QGIS_VERSION)
-# print(QgsApplication.processingRegistry().algorithms())
+print(QgsApplication.processingRegistry().algorithms())
+
+algorithm_id = 'qgis:addfieldtoattributestable'
+algorithm_parameter = {
+    'INPUT': '/data/test_data/routing.geojson',
+    'FIELD_NAME': 'new_field',
+    'FIELD_TYPE': 0,
+    'FIELD_LENGTH': 10,
+    'FIELD_PRECISION': 0,
+    'OUTPUT': '/data/test_data/added_routing.geojson',
+    }
+
+processing.algorithmHelp(algorithm_id)
+print('Running algorithm')
+result = processing.run(algorithm_id, algorithm_parameter)
+print('The result is in ' + result['OUTPUT'])
+
+# qgis:addfieldtoattributestable
 
 qgs.exitQgis()
