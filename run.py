@@ -1,45 +1,46 @@
-import sys
-import qgis.utils
 
-from qgis.core import (
-     QgsApplication, 
-     QgsProcessingFeedback, 
-     QgsVectorLayer
-)
-from qgis.analysis import QgsNativeAlgorithms
+def run_qgis_algorithm(algorithm_id, algorithm_parameters):
+    import sys
+    import qgis.utils
 
-# See https://gis.stackexchange.com/a/155852/4972 for details about the prefix 
-QgsApplication.setPrefixPath('/usr', True)
-qgs = QgsApplication([], False)
-qgs.initQgis()
+    from qgis.core import (
+        QgsApplication, 
+        QgsProcessingFeedback, 
+        QgsVectorLayer
+    )
+    from qgis.analysis import QgsNativeAlgorithms
 
-#  # Append the path where processing plugin can be found
-sys.path.append('/usr/share/qgis/python/plugins/')
+    # See https://gis.stackexchange.com/a/155852/4972 for details about the prefix 
+    QgsApplication.setPrefixPath('/usr', True)
+    qgs = QgsApplication([], False)
+    qgs.initQgis()
 
-import processing
-from processing.core.Processing import Processing
-Processing.initialize()
-QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
+    #  # Append the path where processing plugin can be found
+    sys.path.append('/usr/share/qgis/python/plugins/')
 
-print('Hello world')
-print('You are using QGIS version ' + qgis.utils.Qgis.QGIS_VERSION)
-print(QgsApplication.processingRegistry().algorithms())
+    import processing
+    from processing.core.Processing import Processing
+    Processing.initialize()
+    QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
 
-algorithm_id = 'qgis:addfieldtoattributestable'
-algorithm_parameter = {
-    'INPUT': '/data/test_data/routing.geojson',
-    'FIELD_NAME': 'new_field',
-    'FIELD_TYPE': 0,
-    'FIELD_LENGTH': 10,
-    'FIELD_PRECISION': 0,
-    'OUTPUT': '/data/test_data/added_routing.geojson',
-    }
+    print('Hello world')
+    print('You are using QGIS version ' + qgis.utils.Qgis.QGIS_VERSION)
+    print(QgsApplication.processingRegistry().algorithms())
 
-processing.algorithmHelp(algorithm_id)
-print('Running algorithm')
-result = processing.run(algorithm_id, algorithm_parameter)
-print('The result is in ' + result['OUTPUT'])
+    # algorithm_id = 'qgis:addfieldtoattributestable'
+    # algorithm_parameters = {
+    #     'INPUT': '/data/test_data/routing.geojson',
+    #     'FIELD_NAME': 'new_field',
+    #     'FIELD_TYPE': 0,
+    #     'FIELD_LENGTH': 10,
+    #     'FIELD_PRECISION': 0,
+    #     'OUTPUT': '/data/test_data/added_routing.geojson',
+    #     }
 
-# qgis:addfieldtoattributestable
+    processing.algorithmHelp(algorithm_id)
+    print('Running algorithm')
+    result = processing.run(algorithm_id, algorithm_parameters)
+    print('The result is in ' + result['OUTPUT'])
 
-qgs.exitQgis()
+    qgs.exitQgis()
+    return result['OUTPUT']
