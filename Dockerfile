@@ -18,7 +18,7 @@ RUN mkdir /data
 
 # Copy needed files
 COPY run.py /code/run.py
-COPY run_algorithm.py /code/run_algorithm.py
+COPY main.py /code/main.py
 COPY start.sh /code/start.sh
 
 # Entry point
