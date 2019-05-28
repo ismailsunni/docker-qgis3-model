@@ -1,0 +1,8 @@
+algorithm_id: qgis:addfieldtoattributestable
+algorithm_parameters:
+    INPUT: /data/test_data/routing.geojson
+    FIELD_NAME: new_field
+    FIELD_TYPE: 0
+    FIELD_LENGTH: 10
+    FIELD_PRECISION: 0
+    OUTPUT: /data/test_data/added_routing.geojson
