@@ -3,7 +3,7 @@ import yaml
 import os
 import sys
 
-from run import run_qgis_algorithm
+from algorithm_runner import run_qgis_algorithm
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

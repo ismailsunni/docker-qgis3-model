@@ -17,7 +17,7 @@ WORKDIR /code
 RUN mkdir /data
 
 # Copy needed files
-COPY run.py /code/run.py
+COPY algorithm_runner.py /code/algorithm_runner.py
 COPY main.py /code/main.py
 COPY start.sh /code/start.sh
 
