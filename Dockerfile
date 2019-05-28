@@ -19,6 +19,8 @@ RUN mkdir /data
 # Copy needed files
 COPY algorithm_runner.py /code/algorithm_runner.py
 COPY main.py /code/main.py
+COPY ndvi.py /code/ndvi.py
+COPY ndvi_provider.py /code/ndvi_provider.py
 COPY start.sh /code/start.sh
 
 # Entry point

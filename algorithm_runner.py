@@ -1,5 +1,8 @@
 # Module to run QGIS algorithm
 
+from ndvi import Calculate_ndvi
+from ndvi_provider import NDVIProvider
+
 def run_qgis_algorithm(algorithm_id, algorithm_parameters):
     import sys
     import qgis.utils
@@ -7,7 +10,9 @@ def run_qgis_algorithm(algorithm_id, algorithm_parameters):
     from qgis.core import (
         QgsApplication, 
         QgsProcessingFeedback, 
-        QgsVectorLayer
+        QgsVectorLayer,
+        QgsProcessingProvider,
+        QgsProcessingRegistry,
     )
     from qgis.analysis import QgsNativeAlgorithms
 
@@ -25,7 +30,9 @@ def run_qgis_algorithm(algorithm_id, algorithm_parameters):
     QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
 
     print('You are using QGIS version ' + qgis.utils.Qgis.QGIS_VERSION)
-    print('Number of algorithm: ' + str(len(QgsApplication.processingRegistry().algorithms())))
+    previous_algs = QgsApplication.processingRegistry().algorithms()
+    previous_num = len(QgsApplication.processingRegistry().algorithms())
+    print('Number of algorithm: ' + str(previous_num))
 
     # algorithm_id = 'qgis:addfieldtoattributestable'
     # algorithm_parameters = {
@@ -40,8 +47,21 @@ def run_qgis_algorithm(algorithm_id, algorithm_parameters):
     # Show help for the algorithm
     # processing.algorithmHelp(algorithm_id)
     print('Running algorithm')
-    result = processing.run(algorithm_id, algorithm_parameters)
-    print('The result is in ' + result['OUTPUT'])
+    # result = processing.run(algorithm_id, algorithm_parameters)
+    # print('The result is in ' + result['OUTPUT'])
+
+    # c = Calculate_ndvi().createInstance()
+    c = NDVIProvider()
+    c.loadAlgorithms()
+    QgsApplication.processingRegistry().addProvider(c)
+    now_algs = QgsApplication.processingRegistry().algorithms()
+    now_num = len(QgsApplication.processingRegistry().algorithms())
+    print('Previous number' + str(previous_num))
+    print('Now number' + str(now_num))
+    last_alg = QgsApplication.processingRegistry().algorithms()[-1]
+    print(last_alg.name())
+    print(last_alg.id())
 
     qgs.exitQgis()
-    return result['OUTPUT']
+    # return result['OUTPUT']
+    return ''
