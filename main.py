@@ -1,3 +1,5 @@
+# Main python file to run
+
 import argparse
 import yaml
 import os

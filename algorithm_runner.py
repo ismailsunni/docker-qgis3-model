@@ -1,3 +1,4 @@
+# Module to run QGIS algorithm
 
 def run_qgis_algorithm(algorithm_id, algorithm_parameters):
     import sys
@@ -23,9 +24,8 @@ def run_qgis_algorithm(algorithm_id, algorithm_parameters):
     Processing.initialize()
     QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
 
-    print('Hello world')
     print('You are using QGIS version ' + qgis.utils.Qgis.QGIS_VERSION)
-    print(QgsApplication.processingRegistry().algorithms())
+    print('Number of algorithm: ' + str(len(QgsApplication.processingRegistry().algorithms())))
 
     # algorithm_id = 'qgis:addfieldtoattributestable'
     # algorithm_parameters = {
@@ -37,7 +37,8 @@ def run_qgis_algorithm(algorithm_id, algorithm_parameters):
     #     'OUTPUT': '/data/test_data/added_routing.geojson',
     #     }
 
-    processing.algorithmHelp(algorithm_id)
+    # Show help for the algorithm
+    # processing.algorithmHelp(algorithm_id)
     print('Running algorithm')
     result = processing.run(algorithm_id, algorithm_parameters)
     print('The result is in ' + result['OUTPUT'])
