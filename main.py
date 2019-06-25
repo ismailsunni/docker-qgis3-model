@@ -13,10 +13,11 @@ INPUT_DIRECTORY = '/data/input'
 TEMP_DIRECTORY = '/data/tmp'
 OUTPUT_DIRECTORY = '/data/output'
 
-def main_function(tif_path, output_path, input_directory=INPUT_DIRECTORY):
+def main_function(tif_file_name, output_file_name, input_directory=INPUT_DIRECTORY, output_directory=OUTPUT_DIRECTORY):
     """The main function to calculate NDVI from tif file in `tif_path` to `output_path`
     """
-    full_tif_path = os.path.join(input_directory, tif_path)
+    full_tif_path = os.path.join(input_directory, tif_file_name)
+    full_output_path = os.path.join(output_directory, output_file_name)
     if not os.path.exists(full_tif_path):
         print('TIF file %s is not exist' % full_tif_path)
     else:
@@ -63,8 +64,8 @@ def main_function(tif_path, output_path, input_directory=INPUT_DIRECTORY):
         'Red': os.path.join(TEMP_DIRECTORY, 'red.sdat'),
         'Green': os.path.join(TEMP_DIRECTORY, 'green.sdat'),
         'Blue': os.path.join(TEMP_DIRECTORY, 'blue.sdat'),
-        'G_conv': os.path.join(INPUT_DIRECTORY, 'g_conv.tiff'),
-        'R_conv': os.path.join(INPUT_DIRECTORY, 'r_conv.tiff'),
+        'G_conv': os.path.join(OUTPUT_DIRECTORY, 'g_conv.tiff'),
+        'R_conv': os.path.join(OUTPUT_DIRECTORY, 'r_conv.tiff'),
     }
     # Run algorithm
     split_band_result = processing.run(split_band_algorithm_id, split_band_algorithm_parameters)
@@ -80,7 +81,7 @@ def main_function(tif_path, output_path, input_directory=INPUT_DIRECTORY):
     ndvi_algorithm_parameters = {
         'inputnirband': split_band_result['G_conv'],
         'inputredband': split_band_result['R_conv'],
-        'Output': os.path.join(INPUT_DIRECTORY, 'ndvi_1.tiff')
+        'Output': full_output_path
     }
     # Run algorithm
     ndvi_result = processing.run(ndvi_algorithm_id, ndvi_algorithm_parameters)
