@@ -33,6 +33,7 @@ COPY ndvi_provider.py /code/ndvi_provider.py
 COPY split_band.py /code/split_band.py
 # Algorithm to calculate NDVI
 COPY ndvi_raster_calculator.py /code/ndvi_raster_calculator.py
+COPY ndvi_raster_calculator2.py /code/ndvi_raster_calculator2.py
 # Entry point to run the code with xfvb
 COPY start.sh /code/start.sh
 

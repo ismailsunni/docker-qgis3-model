@@ -10,6 +10,7 @@ from algorithm_runner import run_qgis_algorithm
 # default directory in docker
 INPUT_DIRECTORY = '/data/input'
 TEMP_DIRECTORY = '/data/tmp'
+OUTPUT_DIRECTORY = '/data/output'
 
 def main_function(tif_path, output_path, input_directory=INPUT_DIRECTORY):
     """The main function to calculate NDVI from tif file in `tif_path` to `output_path`
@@ -20,7 +21,7 @@ def main_function(tif_path, output_path, input_directory=INPUT_DIRECTORY):
     else:
         print('TIF file %s is exist' % full_tif_path)
     
-    # Run split bands algorithm
+    #### Run split bands algorithm ####
     # algorithm id: 
     split_band_algorithm_id = 'uas:Calculate_NDVI2'
     # parameters
@@ -33,11 +34,26 @@ def main_function(tif_path, output_path, input_directory=INPUT_DIRECTORY):
         'R_conv': os.path.join(TEMP_DIRECTORY, 'r_conv.tiff'),
     }
     # Run algorithm
-    result = run_qgis_algorithm(split_band_algorithm_id, split_band_algorithm_parameters)
+    split_band_result = run_qgis_algorithm(split_band_algorithm_id, split_band_algorithm_parameters)
 
     # Check result
-    print('Path of G_conv: %s is exist = %s' % (result.get('G_conv'), os.path.exists(result.get('G_conv'))))
-    print('Path of R_conv: %s is exist = %s' % (result.get('R_conv'), os.path.exists(result.get('R_conv'))))
+    print('Path of G_conv: %s is exist = %s' % (split_band_result.get('G_conv'), os.path.exists(split_band_result.get('G_conv'))))
+    print('Path of R_conv: %s is exist = %s' % (split_band_result.get('R_conv'), os.path.exists(split_band_result.get('R_conv'))))
+
+    #### Run NDVI raster calculation algorithm ####
+    # algorithm id: 
+    ndvi_algorithm_id = 'uas:Calculate_NDVI'
+    # parameters
+    ndvi_algorithm_parameters = {
+        'inputnirband': split_band_result['G_conv'],
+        'inputredband': split_band_result['R_conv'],
+        'Output': os.path.join(INPUT_DIRECTORY, 'ndvi.tiff')
+    }
+    # Run algorithm
+    ndvi_result = run_qgis_algorithm(ndvi_algorithm_id, ndvi_algorithm_parameters)
+
+    # Check result
+    print('Path of NDVI: %s is exist = %s' % (ndvi_result.get('Output'), os.path.exists(ndvi_result.get('Output'))))
 
 
 if __name__ == "__main__":
@@ -49,20 +65,4 @@ if __name__ == "__main__":
     print('Input TIF file name: %s' % args.tif_file_name)
     print('Output path: %s' % args.output_file_name)
     main_function(args.tif_file_name, args.output_file_name)
-    # if not os.path.exists(yaml_path):
-    #     print('File not found at ' + yaml_path)
-    #     sys.exit()
-    # with open(yaml_path, 'r') as stream:
-    #     try:
-    #         configuration = yaml.safe_load(stream)
-    #         print('Algorithm ID: ' + configuration['algorithm_id'])
-    #         print('Algorithm parameter: ')
-    #         for k, v in configuration['algorithm_parameters'].items():
-    #             print(k + ' : ' + str(v))
-    #     except FileNotFoundError:
-    #         print('File not found at ' + yaml_path)
-    #     except yaml.YAMLError as exc:
-    #         print(exc)
-    # print('run algorithm')
-    # run_qgis_algorithm(configuration['algorithm_id'], configuration['algorithm_parameters'])
     print('fin')

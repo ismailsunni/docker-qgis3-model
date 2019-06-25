@@ -2,7 +2,8 @@ from qgis.core import QgsProcessingProvider
 
 # from ndvi import Calculate_ndvi
 
-from ndvi_raster_calculator import Calculate_ndvi
+# from ndvi_raster_calculator import Calculate_ndvi
+from ndvi_raster_calculator2 import Calculate_ndvi
 from split_band import Calculate_ndvi2
 
 
