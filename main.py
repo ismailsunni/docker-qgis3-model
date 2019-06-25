@@ -5,7 +5,8 @@ import yaml
 import os
 import sys
 
-from algorithm_runner import run_qgis_algorithm
+# from algorithm_runner import run_qgis_algorithm
+from ndvi_provider import NDVIProvider
 
 # default directory in docker
 INPUT_DIRECTORY = '/data/input'
@@ -20,6 +21,38 @@ def main_function(tif_path, output_path, input_directory=INPUT_DIRECTORY):
         print('TIF file %s is not exist' % full_tif_path)
     else:
         print('TIF file %s is exist' % full_tif_path)
+
+    #### Prepare QGIS ####
+    import sys
+    import qgis.utils
+
+    from qgis.core import (
+        QgsApplication, 
+        QgsProcessingFeedback, 
+        QgsVectorLayer,
+        QgsProcessingProvider,
+        QgsProcessingRegistry,
+    )
+    from qgis.analysis import QgsNativeAlgorithms
+
+    # See https://gis.stackexchange.com/a/155852/4972 for details about the prefix 
+    QgsApplication.setPrefixPath('/usr', True)
+    qgs = QgsApplication([], False)
+    qgs.initQgis()
+
+    #  # Append the path where processing plugin can be found
+    sys.path.append('/usr/share/qgis/python/plugins/')
+
+    import processing
+    from processing.core.Processing import Processing
+    Processing.initialize()
+    QgsApplication.processingRegistry().addProvider(QgsNativeAlgorithms())
+
+    #### Add NDVI Provider ####
+    provider = NDVIProvider()
+    provider.loadAlgorithms()
+
+    QgsApplication.processingRegistry().addProvider(provider)
     
     #### Run split bands algorithm ####
     # algorithm id: 
@@ -30,11 +63,11 @@ def main_function(tif_path, output_path, input_directory=INPUT_DIRECTORY):
         'Red': os.path.join(TEMP_DIRECTORY, 'red.sdat'),
         'Green': os.path.join(TEMP_DIRECTORY, 'green.sdat'),
         'Blue': os.path.join(TEMP_DIRECTORY, 'blue.sdat'),
-        'G_conv': os.path.join(TEMP_DIRECTORY, 'g_conv.tiff'),
-        'R_conv': os.path.join(TEMP_DIRECTORY, 'r_conv.tiff'),
+        'G_conv': os.path.join(INPUT_DIRECTORY, 'g_conv.tiff'),
+        'R_conv': os.path.join(INPUT_DIRECTORY, 'r_conv.tiff'),
     }
     # Run algorithm
-    split_band_result = run_qgis_algorithm(split_band_algorithm_id, split_band_algorithm_parameters)
+    split_band_result = processing.run(split_band_algorithm_id, split_band_algorithm_parameters)
 
     # Check result
     print('Path of G_conv: %s is exist = %s' % (split_band_result.get('G_conv'), os.path.exists(split_band_result.get('G_conv'))))
@@ -47,13 +80,16 @@ def main_function(tif_path, output_path, input_directory=INPUT_DIRECTORY):
     ndvi_algorithm_parameters = {
         'inputnirband': split_band_result['G_conv'],
         'inputredband': split_band_result['R_conv'],
-        'Output': os.path.join(INPUT_DIRECTORY, 'ndvi.tiff')
+        'Output': os.path.join(INPUT_DIRECTORY, 'ndvi_1.tiff')
     }
     # Run algorithm
-    ndvi_result = run_qgis_algorithm(ndvi_algorithm_id, ndvi_algorithm_parameters)
+    ndvi_result = processing.run(ndvi_algorithm_id, ndvi_algorithm_parameters)
 
     # Check result
     print('Path of NDVI: %s is exist = %s' % (ndvi_result.get('Output'), os.path.exists(ndvi_result.get('Output'))))
+
+    # Exit QGIS
+    qgs.exitQgis()
 
 
 if __name__ == "__main__":

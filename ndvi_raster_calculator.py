@@ -23,7 +23,7 @@ class Calculate_ndvi(QgsProcessingAlgorithm):
         # Raster calculator
         alg_params = {
             'CELLSIZE': 0.03,
-            'CRS': 'ProjectCrs',
+            'CRS': parameters['inputnirband'],
             'EXPRESSION': ' ( \"INPUT_NIR_BAND@1\" - \"INPUT_RED_BAND@1\" )  /  ( \"INPUT_NIR_BAND@1\" + \"INPUT_RED_BAND@1\" ) ',
             'EXTENT': parameters['inputnirband'],
             'LAYERS': [],
