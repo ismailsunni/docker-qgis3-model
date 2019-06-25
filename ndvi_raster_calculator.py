@@ -24,7 +24,7 @@ class Calculate_ndvi(QgsProcessingAlgorithm):
         alg_params = {
             'CELLSIZE': 0.03,
             'CRS': parameters['inputnirband'],
-            'EXPRESSION': ' ( \"INPUT_NIR_BAND@1\" - \"INPUT_RED_BAND@1\" )  /  ( \"INPUT_NIR_BAND@1\" + \"INPUT_RED_BAND@1\" ) ',
+            'EXPRESSION': 'Float( \"INPUT_NIR_BAND@1\" - \"INPUT_RED_BAND@1\" )  /  Float( \"INPUT_NIR_BAND@1\" + \"INPUT_RED_BAND@1\" )',
             'EXTENT': parameters['inputnirband'],
             'LAYERS': [],
             'OUTPUT': parameters['Output']
