@@ -3,14 +3,14 @@ from qgis.core import QgsProcessingProvider
 # from ndvi import Calculate_ndvi
 
 from ndvi_raster_calculator import Calculate_ndvi
-from split_band import Calculate_ndvi2
+from split_band import Split_bands
 
 
 class NDVIProvider(QgsProcessingProvider):
 
     def loadAlgorithms(self, *args, **kwargs):
         self.addAlgorithm(Calculate_ndvi())
-        self.addAlgorithm(Calculate_ndvi2())
+        self.addAlgorithm(Split_bands())
         # self.addAlgorithm(MyOtherAlgorithm())
 
     def id(self, *args, **kwargs):

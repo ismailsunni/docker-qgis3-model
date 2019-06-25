@@ -59,15 +59,16 @@ def main_function(tif_file_name, output_file_name, input_directory=INPUT_DIRECTO
     
     #### Run split bands algorithm ####
     # algorithm id: 
-    split_band_algorithm_id = 'uas:Calculate_NDVI2'
+    split_band_algorithm_id = 'uas:Split_bands'
     # parameters
     split_band_algorithm_parameters = {
         'inputimage': full_tif_path,
         'Red': os.path.join(TEMP_DIRECTORY, 'red.sdat'),
         'Green': os.path.join(TEMP_DIRECTORY, 'green.sdat'),
-        'Blue': os.path.join(TEMP_DIRECTORY, 'blue.sdat'),
-        'G_conv': os.path.join(OUTPUT_DIRECTORY, 'g_conv.tif'),
-        'R_conv': os.path.join(OUTPUT_DIRECTORY, 'r_conv.tif'),
+        'Blue': os.path.join(TEMP_DIRECTORY, 'nir.sdat'),
+        'R_conv': os.path.join(OUTPUT_DIRECTORY, 'red_conv.tif'),
+        'G_conv': os.path.join(OUTPUT_DIRECTORY, 'green_conv.tif'),
+        'B_conv': os.path.join(OUTPUT_DIRECTORY, 'nir_conv.tif'),
     }
     # Run algorithm
     split_band_result = processing.run(split_band_algorithm_id, split_band_algorithm_parameters)
@@ -82,7 +83,7 @@ def main_function(tif_file_name, output_file_name, input_directory=INPUT_DIRECTO
     ndvi_algorithm_id = 'uas:Calculate_NDVI'
     # parameters
     ndvi_algorithm_parameters = {
-        'inputnirband': split_band_result['G_conv'],
+        'inputnirband': split_band_result['B_conv'],
         'inputredband': split_band_result['R_conv'],
         'Output': full_output_path
     }

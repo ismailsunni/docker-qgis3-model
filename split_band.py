@@ -6,12 +6,13 @@ from qgis.core import QgsProcessingParameterRasterDestination
 import processing
 
 
-class Calculate_ndvi2(QgsProcessingAlgorithm):
+class Split_bands(QgsProcessingAlgorithm):
 
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterRasterLayer('inputimage', 'INPUT_IMAGE', defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterDestination('R_conv', 'R_conv', createByDefault=True, defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterDestination('G_conv', 'G_conv', createByDefault=True, defaultValue=None))
+        self.addParameter(QgsProcessingParameterRasterDestination('B_conv', 'B_conv', createByDefault=True, defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterDestination('Blue', 'BLUE', createByDefault=True, defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterDestination('Green', 'GREEN', createByDefault=True, defaultValue=None))
         self.addParameter(QgsProcessingParameterRasterDestination('Red', 'RED', createByDefault=True, defaultValue=None))
@@ -19,7 +20,7 @@ class Calculate_ndvi2(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, model_feedback):
         # Use a multi-step feedback, so that individual child algorithm progress reports are adjusted for the
         # overall progress through the model
-        feedback = QgsProcessingMultiStepFeedback(3, model_feedback)
+        feedback = QgsProcessingMultiStepFeedback(4, model_feedback)
         results = {}
         outputs = {}
 
@@ -46,7 +47,7 @@ class Calculate_ndvi2(QgsProcessingAlgorithm):
             'INPUT': outputs['SplitRgbBands']['R'],
             'NODATA': None,
             'OPTIONS': '',
-            'TARGET_CRS': None,
+            'TARGET_CRS': parameters['inputimage'],
             'OUTPUT': parameters['R_conv']
         }
         outputs['TranslateConvertFormat'] = processing.run('gdal:translate', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
@@ -60,10 +61,27 @@ class Calculate_ndvi2(QgsProcessingAlgorithm):
         alg_params = {
             'COPY_SUBDATASETS': False,
             'DATA_TYPE': 0,
+            'INPUT': outputs['SplitRgbBands']['B'],
+            'NODATA': None,
+            'OPTIONS': '',
+            'TARGET_CRS': parameters['inputimage'],
+            'OUTPUT': parameters['B_conv']
+        }
+        outputs['TranslateConvertFormat'] = processing.run('gdal:translate', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
+        results['B_conv'] = outputs['TranslateConvertFormat']['OUTPUT']
+
+        feedback.setCurrentStep(3)
+        if feedback.isCanceled():
+            return {}
+
+        # Translate (convert format)
+        alg_params = {
+            'COPY_SUBDATASETS': False,
+            'DATA_TYPE': 0,
             'INPUT': outputs['SplitRgbBands']['G'],
             'NODATA': None,
             'OPTIONS': '',
-            'TARGET_CRS': None,
+            'TARGET_CRS': parameters['inputimage'],
             'OUTPUT': parameters['G_conv']
         }
         outputs['TranslateConvertFormat'] = processing.run('gdal:translate', alg_params, context=context, feedback=feedback, is_child_algorithm=True)
@@ -71,10 +89,10 @@ class Calculate_ndvi2(QgsProcessingAlgorithm):
         return results
 
     def name(self):
-        return 'Calculate_NDVI2'
+        return 'Split_bands'
 
     def displayName(self):
-        return 'Calculate_NDVI2'
+        return 'Split_bands'
 
     def group(self):
         return ''
@@ -83,4 +101,4 @@ class Calculate_ndvi2(QgsProcessingAlgorithm):
         return ''
 
     def createInstance(self):
-        return Calculate_ndvi2()
+        return Split_bands()
