@@ -113,7 +113,7 @@ def main_function(tif_file_name, output_file_name, input_directory=INPUT_DIRECTO
         red.bandNumber = 1
         entries.append(red)
 
-        ndvi_expression = 'Float( red@1 - nir@1 ) / Float( nir@1 + red@1 )'
+        ndvi_expression = 'Float( nir@1 - red@1 ) / Float( nir@1 + red@1 )'
 
         calc = QgsRasterCalculator(
             ndvi_expression, ndvi_algorithm_parameters['Output'], 'GTiff', nir_layer.extent(), nir_layer.width(), nir_layer.height(), entries)
