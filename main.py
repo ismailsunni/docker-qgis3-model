@@ -64,8 +64,8 @@ def main_function(tif_file_name, output_file_name, input_directory=INPUT_DIRECTO
         'Red': os.path.join(TEMP_DIRECTORY, 'red.sdat'),
         'Green': os.path.join(TEMP_DIRECTORY, 'green.sdat'),
         'Blue': os.path.join(TEMP_DIRECTORY, 'blue.sdat'),
-        'G_conv': os.path.join(OUTPUT_DIRECTORY, 'g_conv.tiff'),
-        'R_conv': os.path.join(OUTPUT_DIRECTORY, 'r_conv.tiff'),
+        'G_conv': os.path.join(OUTPUT_DIRECTORY, 'g_conv.tif'),
+        'R_conv': os.path.join(OUTPUT_DIRECTORY, 'r_conv.tif'),
     }
     # Run algorithm
     split_band_result = processing.run(split_band_algorithm_id, split_band_algorithm_parameters)
