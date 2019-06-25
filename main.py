@@ -33,6 +33,8 @@ def main_function(tif_file_name, output_file_name, input_directory=INPUT_DIRECTO
         QgsVectorLayer,
         QgsProcessingProvider,
         QgsProcessingRegistry,
+        QgsRasterLayer,
+        QgsProject
     )
     from qgis.analysis import QgsNativeAlgorithms
 
@@ -74,6 +76,7 @@ def main_function(tif_file_name, output_file_name, input_directory=INPUT_DIRECTO
     print('Path of G_conv: %s is exist = %s' % (split_band_result.get('G_conv'), os.path.exists(split_band_result.get('G_conv'))))
     print('Path of R_conv: %s is exist = %s' % (split_band_result.get('R_conv'), os.path.exists(split_band_result.get('R_conv'))))
 
+    
     #### Run NDVI raster calculation algorithm ####
     # algorithm id: 
     ndvi_algorithm_id = 'uas:Calculate_NDVI'
@@ -83,11 +86,40 @@ def main_function(tif_file_name, output_file_name, input_directory=INPUT_DIRECTO
         'inputredband': split_band_result['R_conv'],
         'Output': full_output_path
     }
-    # Run algorithm
-    ndvi_result = processing.run(ndvi_algorithm_id, ndvi_algorithm_parameters)
+    if False:
+        # Run algorithm
+        ndvi_result = processing.run(ndvi_algorithm_id, ndvi_algorithm_parameters)
 
-    # Check result
-    print('Path of NDVI: %s is exist = %s' % (ndvi_result.get('Output'), os.path.exists(ndvi_result.get('Output'))))
+        # Check result
+        print('Path of NDVI: %s is exist = %s' % (ndvi_result.get('Output'), os.path.exists(ndvi_result.get('Output'))))
+    else:
+        from qgis.analysis import QgsRasterCalculator, QgsRasterCalculatorEntry
+        
+        entries = []
+
+        nir_layer = QgsRasterLayer(ndvi_algorithm_parameters['inputnirband'], "nir")
+        QgsProject.instance().addMapLayer(nir_layer)
+        nir = QgsRasterCalculatorEntry()
+        nir.ref = 'nir@1'
+        nir.raster = nir_layer
+        nir.bandNumber = 1
+        entries.append(nir)
+
+        red_layer = QgsRasterLayer(ndvi_algorithm_parameters['inputredband'], "red")
+        QgsProject.instance().addMapLayer(red_layer)
+        red = QgsRasterCalculatorEntry()
+        red.ref = 'red@1'
+        red.raster = red_layer
+        red.bandNumber = 1
+        entries.append(red)
+
+        ndvi_expression = 'Float( red@1 - nir@1 ) / Float( nir@1 + red@1 )'
+
+        calc = QgsRasterCalculator(
+            ndvi_expression, ndvi_algorithm_parameters['Output'], 'GTiff', nir_layer.extent(), nir_layer.width(), nir_layer.height(), entries)
+        
+        a = calc.processCalculation()
+        print('Result: ', a)
 
     # Exit QGIS
     qgs.exitQgis()
