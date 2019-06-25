@@ -7,20 +7,27 @@ import sys
 
 from algorithm_runner import run_qgis_algorithm
 
-def main_function(tif_path, output_path):
+# default directory in docker
+INPUT_DIRECTORY = '/data/input'
+
+def main_function(tif_path, output_path, input_directory=INPUT_DIRECTORY):
     """The main function to calculate NDVI from tif file in `tif_path` to `output_path`
     """
-    if not os.path.exists(tif_path):
-        print('TIF file %s is not exist' % tif_path)
+    full_tif_path = os.path.join(input_directory, tif_path)
+    if not os.path.exists(full_tif_path):
+        print('TIF file %s is not exist' % full_tif_path)
+    else:
+        print('TIF file %s is exist' % full_tif_path)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("tif", help="TIF input")
-    parser.add_argument("output", help="Output path")
+    parser.add_argument("tif_file_name", help="TIF input file name")
+    parser.add_argument("output_file_name", help="Output file name")
     args = parser.parse_args()
-    tif_path = args.tif
-    print('Input TIF: %s' % args.tif)
-    print('Output path: %s' % args.output)
+    tif_path = args.tif_file_name
+    print('Input TIF file name: %s' % args.tif_file_name)
+    print('Output path: %s' % args.output_file_name)
+    main_function(args.tif_file_name, args.output_file_name)
     # if not os.path.exists(yaml_path):
     #     print('File not found at ' + yaml_path)
     #     sys.exit()
